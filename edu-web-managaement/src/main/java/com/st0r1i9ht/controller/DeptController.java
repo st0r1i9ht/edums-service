@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+//@RequestMapping注解位置
+//1.类上(可选) 2.方法上
+//一个完整的请求路径=类上+方法上
+@RequestMapping("/depts")
 @RestController
 public class DeptController {
     @Autowired
@@ -19,12 +23,11 @@ public class DeptController {
      * 接口文档要求返回值为{"code":1, "msg":"success", "data":null}这种格式 所以返回封装对象Result
      * 类注解@RestController中包含的@ResponseBody会将返回的对象和字符串转换为json
      *
-     * @return
      */
     //@RequsetMapping不会指定请求方式, 任何请求都可以访问
     //method 指定请求方式 使用RequestMapping指定请求方式过于繁琐 改用@GetMapping指定请求方式为GET
     //@RequestMapping(value = "/depts", method = RequestMethod.GET)
-    @GetMapping("/depts")
+    @GetMapping
     //@PostMapping @DeleteMapping @PutMapping
     public Result list() {
         System.out.println("查询全部部门数据");
@@ -32,14 +35,14 @@ public class DeptController {
         return Result.success(deptList);
     }
 
-    /*
+    /**
      * Controller层负责获取请求 调用Service接口 返回数据
      * Service层负责处理业务逻辑 调用Mapper接口
      * Mapper层负责数据库操作
      */
 
     //Controller接收请求参数:DELETE /depts?id=8
-    /**
+    /*
      * 方式一:通过原始的HttpServletRequest对象获取请求参数
      * 代码繁琐 需要手动进行类型转换
      * 不推荐
@@ -72,7 +75,7 @@ public class DeptController {
      * 不一致会返回null
      * 推荐 仅需保证前端请求参数名和服务端形参变量名相同即可
      */
-    @DeleteMapping("/depts")
+    @DeleteMapping
     public Result delete(Integer id) {
         System.out.println("根据ID删除部门:" + id);
         deptService.deleteById(id);
@@ -85,7 +88,7 @@ public class DeptController {
      * 使用@RequestBody注解方法形参, 保持JSON数据键名和方法形参对象属性名相同
      * 该注解会将JSON数据转换并封装为该对象的属性
      */
-    @PostMapping("/depts")
+    @PostMapping
     public Result add(@RequestBody Dept dept) {
         System.out.println("新增部门:" + dept);
         deptService.add(dept);
@@ -106,7 +109,7 @@ public class DeptController {
     /**
      * 如果形参名称与路径参数名一致可以省略@PathVariable的value属性值可以省略
      */
-    @GetMapping("/depts/{id}")
+    @GetMapping("/{id}")
     public Result getInfo(@PathVariable Integer id) {
         System.out.println("根据ID查询部门:" + id);
         Dept dept = deptService.getById(id);
@@ -116,7 +119,7 @@ public class DeptController {
     /**
      * 修改部门
      */
-    @PutMapping("/depts")
+    @PutMapping
     public Result update(@RequestBody Dept dept) {
         System.out.println("修改部门:" + dept);
         deptService.update(dept);
